@@ -1,4 +1,4 @@
-package com.thoughtworks.tdd.demo.domain;
+package com.thoughtworks.tdd.cart.domain;
 
 import java.util.Optional;
 

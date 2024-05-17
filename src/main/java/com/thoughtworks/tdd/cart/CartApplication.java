@@ -1,13 +1,13 @@
-package com.thoughtworks.tdd.demo;
+package com.thoughtworks.tdd.cart;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class DemoApplication {
+public class CartApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(DemoApplication.class, args);
+		SpringApplication.run(CartApplication.class, args);
 	}
 
 }

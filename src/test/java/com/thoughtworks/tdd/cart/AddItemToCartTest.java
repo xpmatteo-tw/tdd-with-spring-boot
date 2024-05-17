@@ -1,10 +1,10 @@
-package com.thoughtworks.tdd.demo;
+package com.thoughtworks.tdd.cart;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.thoughtworks.tdd.demo.domain.Cart;
-import com.thoughtworks.tdd.demo.domain.CartId;
-import com.thoughtworks.tdd.demo.domain.CartRepository;
+import com.thoughtworks.tdd.cart.domain.Cart;
+import com.thoughtworks.tdd.cart.domain.CartId;
+import com.thoughtworks.tdd.cart.domain.CartRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -31,7 +31,7 @@ class FakeRepositoryConfig {
     }
 }
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = DemoApplication.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = CartApplication.class)
 @Import(FakeRepositoryConfig.class)
 public class AddItemToCartTest {
     @Autowired
@@ -42,21 +42,21 @@ public class AddItemToCartTest {
 
     @Test
     void addOneItem_ok() throws JsonProcessingException {
-        when(FakeRepositoryConfig.cartRepository.findCard(new CartId(1234)))
+        when(FakeRepositoryConfig.cartRepository.findCard(new CartId("C1234")))
                 .thenReturn(Optional.of(new Cart()));
         var request = """
                 {
-                    "productId": 4567,
+                    "productId": "P4576",
                     "quantity": 1
                 }
                 """;
 
-        var responseEntity = restTemplate.postForEntity("/carts/1234", toObject(request), String.class);
+        var responseEntity = restTemplate.postForEntity("/carts/C1234", toObject(request), String.class);
 
         var expectedResponse = """
                 {
                     "items": [
-                        {"itemId": 4576, "quantity": 1}
+                        {"productId": "P4576", "quantity": 1}
                     ]
                 }
                 """;
@@ -67,16 +67,16 @@ public class AddItemToCartTest {
 
     @Test
     void addOneItem_badCartId() {
-        when(FakeRepositoryConfig.cartRepository.findCard(new CartId(1234)))
+        when(FakeRepositoryConfig.cartRepository.findCard(new CartId("C1234")))
                 .thenReturn(Optional.empty());
         var request = """
                 {
-                    "itemId": 4567,
+                    "productId": "P4576",
                     "quantity": 1
                 }
                 """;
 
-        var responseEntity = restTemplate.postForEntity("/carts/9999", request, ProblemDetail.class);
+        var responseEntity = restTemplate.postForEntity("/carts/C9999", request, ProblemDetail.class);
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
         assertThat(responseEntity.getBody()).isNotNull();
