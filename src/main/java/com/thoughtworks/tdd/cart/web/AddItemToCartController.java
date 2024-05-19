@@ -5,12 +5,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
 public class AddItemToCartController {
     @PostMapping("/carts/C1234")
     public ResponseEntity<Object> addItemToCart(@RequestBody Object request) {
-        return ResponseEntity.ok(Map.of());
+        return ResponseEntity.ok(Map.of("items", List.of(
+                Map.of("productId", "P4567", "quantity", 1)
+        )));
     }
 }
