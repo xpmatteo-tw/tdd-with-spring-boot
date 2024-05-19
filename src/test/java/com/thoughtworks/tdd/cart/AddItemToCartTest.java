@@ -27,18 +27,18 @@ public class AddItemToCartTest {
                 }
                 """;
 
-        var responseEntity = restTemplate.postForEntity("/carts/C1234", toObject(request), Object.class);
+        var responseEntity = restTemplate.postForEntity("/carts/C1234", toObject(request), String.class);
 
         var expectedResponse = """
                 {
                     "items": [
-                        {"productId": "P4576", "quantity": 1}
+                        {"productId": "P4567", "quantity": 1}
                     ]
                 }
                 """;
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(responseEntity.getBody()).isNotNull();
-        assertThat(responseEntity.getBody()).isEqualTo(expectedResponse);
+        assertThat(toObject(responseEntity.getBody())).isEqualTo(toObject(expectedResponse));
     }
 
     public Object toObject(String json) throws JsonProcessingException {
