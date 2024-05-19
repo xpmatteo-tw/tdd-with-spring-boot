@@ -15,8 +15,11 @@ public class AddItemToCartTest {
     @Autowired
     TestRestTemplate restTemplate;
 
+    @Autowired
+    ObjectMapper objectMapper;
+
     @Test
-    void addOneItem_ok() {
+    void addOneItem_ok() throws JsonProcessingException {
         var request = """
                 {
                     "productId": "P4576",
@@ -24,7 +27,7 @@ public class AddItemToCartTest {
                 }
                 """;
 
-        var responseEntity = restTemplate.postForEntity("/carts/C1234", request, String.class);
+        var responseEntity = restTemplate.postForEntity("/carts/C1234", toObject(request), Object.class);
 
         var expectedResponse = """
                 {
@@ -36,5 +39,9 @@ public class AddItemToCartTest {
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(responseEntity.getBody()).isNotNull();
         assertThat(responseEntity.getBody()).isEqualTo(expectedResponse);
+    }
+
+    public Object toObject(String json) throws JsonProcessingException {
+        return objectMapper.readValue(json, Object.class);
     }
 }
