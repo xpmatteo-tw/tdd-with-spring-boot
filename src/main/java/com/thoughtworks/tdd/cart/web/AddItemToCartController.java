@@ -21,16 +21,14 @@ public class AddItemToCartController {
     public record AddItemToCartRequest(String productId, int quantity) {
     }
 
-    public record AddItemToCartResponse(List<RequestCartItem> items) {
+    public record AddItemToCartResponse(List<Pair<String, Integer>> items) {
         private static AddItemToCartResponse fromMap(Map<ProductId, Quantity> map) {
-            var items = new ArrayList<RequestCartItem>();
+            var items = new ArrayList<Pair<String, Integer>>();
             map.forEach((key, value) ->
-                    items.add(new RequestCartItem(key.value(), value.value()))
+                    items.add(new Pair<>(key.value(), value.value()))
             );
             return new AddItemToCartResponse(items);
         }
-
-        public record RequestCartItem(String productId, int quantity) {}
     }
 
     @Autowired

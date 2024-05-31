@@ -1,9 +1,11 @@
 package com.thoughtworks.tdd.cart.web;
 
-import com.thoughtworks.tdd.cart.domain.*;
+import com.thoughtworks.tdd.cart.domain.AddsItemToCart;
+import com.thoughtworks.tdd.cart.domain.CartId;
+import com.thoughtworks.tdd.cart.domain.ProductId;
+import com.thoughtworks.tdd.cart.domain.Quantity;
 import com.thoughtworks.tdd.cart.web.AddItemToCartController.AddItemToCartRequest;
 import com.thoughtworks.tdd.cart.web.AddItemToCartController.AddItemToCartResponse;
-import com.thoughtworks.tdd.cart.web.AddItemToCartController.AddItemToCartResponse.RequestCartItem;
 import org.junit.jupiter.api.Test;
 import org.mockito.quality.Strictness;
 import org.springframework.http.HttpStatus;
@@ -11,7 +13,6 @@ import org.springframework.http.ProblemDetail;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -33,7 +34,7 @@ class AddItemToCartControllerTest {
         assertThat(response.getBody()).isNotNull();
         assertThat(response.getBody()).isEqualTo(
                 new AddItemToCartResponse(
-                        List.of(new RequestCartItem("P456", 3))));
+                        List.of(new Pair<>("P456", 3))));
     }
 
     @Test
