@@ -47,22 +47,21 @@ public class AddItemToCartTest {
 
     @Test
     void addOneItem_ok() throws JsonProcessingException {
-        when(RepositoryConfiguration.fakeCartRepository.findCart(new CartId("C1234")))
+        when(RepositoryConfiguration.fakeCartRepository.findCart(new CartId("C123")))
                 .thenReturn(Optional.of(new Cart()));
-
         var request = """
                 {
-                    "productId": "P4576",
+                    "productId": "P456",
                     "quantity": 1
                 }
                 """;
 
-        var responseEntity = restTemplate.postForEntity("/carts/C1234", toObject(request), String.class);
+        var responseEntity = restTemplate.postForEntity("/carts/C123", toObject(request), String.class);
 
         var expectedResponse = """
                 {
                     "items": [
-                        {"productId": "P4567", "quantity": 1}
+                        {"productId": "P456", "quantity": 1}
                     ]
                 }
                 """;
@@ -77,12 +76,12 @@ public class AddItemToCartTest {
                 .thenReturn(Optional.empty());
         var request = """
                 {
-                    "productId": "P4576",
+                    "productId": "P456",
                     "quantity": 1
                 }
                 """;
 
-        var responseEntity = restTemplate.postForEntity("/carts/C9999", toObject(request), ProblemDetail.class);
+        var responseEntity = restTemplate.postForEntity("/carts/C999", toObject(request), ProblemDetail.class);
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
         assertThat(responseEntity.getBody()).isNotNull();
