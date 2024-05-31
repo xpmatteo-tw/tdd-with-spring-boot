@@ -3,7 +3,6 @@ package com.thoughtworks.tdd.cart.domain;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
 
 public class Cart {
     private final Map<ProductId, Quantity> items = new HashMap<>();
@@ -25,4 +24,7 @@ public class Cart {
         this.items.forEach(f);
     }
 
+    public Map<ProductId, Quantity> items() {
+        return new HashMap<>(items);
+    }
 }

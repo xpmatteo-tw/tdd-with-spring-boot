@@ -17,8 +17,8 @@ import static org.mockito.Mockito.when;
 
 class AddItemToCartControllerTest {
 
-    AddItemToCartService addItemToCartService = mock(AddItemToCartService.class);
-    AddItemToCartController controller = new AddItemToCartController(addItemToCartService);
+    AddsItemToCart addsItemToCart = mock(AddsItemToCart.class);
+    AddItemToCartController controller = new AddItemToCartController(addsItemToCart);
 
     @Test
     void returns200OK() {
@@ -26,7 +26,7 @@ class AddItemToCartControllerTest {
         var productId = new ProductId("P456");
         var addedQuantity = new Quantity(2);
         var updatedQuantity = new Quantity(3);
-        when(addItemToCartService.addItemToCart(cartId, productId, addedQuantity))
+        when(addsItemToCart.addItemToCart(cartId, productId, addedQuantity))
                 .thenReturn(Optional.of(Cart.with(productId, updatedQuantity)));
         var request = new AddItemToCartRequest("P456", 2);
 
@@ -44,7 +44,7 @@ class AddItemToCartControllerTest {
         var product1 = new ProductId("P111");
         var product2 = new ProductId("P222");
         var quantity = new Quantity(1);
-        when(addItemToCartService.addItemToCart(cartId, product1, quantity))
+        when(addsItemToCart.addItemToCart(cartId, product1, quantity))
                 .thenReturn(Optional.of(Cart.with(product1, quantity, product2, quantity)));
         var request = new AddItemToCartRequest("P111", 1);
 
@@ -65,7 +65,7 @@ class AddItemToCartControllerTest {
         var productId = new ProductId("P456");
         var addedQuantity = new Quantity(2);
         var request = new AddItemToCartRequest("P456", 1);
-        when(addItemToCartService.addItemToCart(cartId, productId, addedQuantity))
+        when(addsItemToCart.addItemToCart(cartId, productId, addedQuantity))
                 .thenReturn(Optional.empty());
 
         var response = controller.addItemToCart("C123", request);

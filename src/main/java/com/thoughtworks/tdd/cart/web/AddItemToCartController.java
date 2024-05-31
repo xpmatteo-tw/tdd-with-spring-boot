@@ -15,7 +15,7 @@ import java.util.List;
 
 @RestController
 public class AddItemToCartController {
-    private final AddItemToCartService service;
+    private final AddsItemToCart service;
 
     public record AddItemToCartRequest(String productId, int quantity) {
     }
@@ -31,7 +31,7 @@ public class AddItemToCartController {
     }
 
     @Autowired
-    public AddItemToCartController(AddItemToCartService service) {
+    public AddItemToCartController(AddsItemToCart service) {
         this.service = service;
     }
 
