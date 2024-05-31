@@ -1,5 +1,7 @@
 package com.thoughtworks.tdd.cart.domain;
 
+import java.util.Optional;
+
 public interface AddItemToCartService {
-    Cart addItemToCart(CartId cartId, ProductId productId, Quantity quantity);
+    Optional<Cart> addItemToCart(CartId cartId, ProductId productId, Quantity quantity);
 }
