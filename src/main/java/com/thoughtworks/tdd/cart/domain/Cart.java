@@ -27,4 +27,8 @@ public class Cart {
     public Map<ProductId, Quantity> items() {
         return new HashMap<>(items);
     }
+
+    public void addItem(ProductId productId, Quantity quantity) {
+        this.items.put(productId, quantity);
+    }
 }
