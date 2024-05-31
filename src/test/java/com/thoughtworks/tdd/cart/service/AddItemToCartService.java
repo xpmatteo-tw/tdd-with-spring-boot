@@ -13,8 +13,11 @@ public class AddItemToCartService implements AddsItemToCart {
     }
 
     @Override
-    public Map<ProductId, Quantity> addItemToCart(CartId cartId, ProductId productId, Quantity quantity) {
+    public Map<ProductId, Quantity> addItemToCart(CartId cartId, ProductId productId, Quantity quantity) throws CartNotFound {
         Optional<Cart> optionalCart = repository.findCart(cartId);
+        if (optionalCart.isEmpty()) {
+            throw new CartNotFound();
+        }
         Cart cart = optionalCart.get();
         cart.addItem(productId, quantity);
         repository.save(cart);
