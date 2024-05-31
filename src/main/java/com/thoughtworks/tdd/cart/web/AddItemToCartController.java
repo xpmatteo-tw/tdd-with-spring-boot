@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class AddItemToCartController {
@@ -21,10 +22,12 @@ public class AddItemToCartController {
     }
 
     public record AddItemToCartResponse(List<RequestCartItem> items) {
-        private static AddItemToCartResponse fromCart(Cart cart) {
-            var cartItems = new ArrayList<RequestCartItem>();
-            cart.forAllProducts((p, q) -> cartItems.add(new RequestCartItem(p.value(), q.value())));
-            return new AddItemToCartResponse(cartItems);
+        private static AddItemToCartResponse fromMap(Map<ProductId, Quantity> map) {
+            var items = new ArrayList<RequestCartItem>();
+            map.forEach((key, value) ->
+                    items.add(new RequestCartItem(key.value(), value.value()))
+            );
+            return new AddItemToCartResponse(items);
         }
 
         public record RequestCartItem(String productId, int quantity) {}
@@ -37,11 +40,12 @@ public class AddItemToCartController {
 
     @PostMapping("/carts/{cartId}")
     public ResponseEntity<Object> addItemToCart(@PathVariable String cartId, @RequestBody AddItemToCartRequest request) {
-        var cart = this.service.addItemToCart(new CartId(cartId), new ProductId(request.productId), new Quantity(request.quantity));
-        if (cart.isEmpty()) {
+        try {
+            var map = this.service.addItemToCart(new CartId(cartId), new ProductId(request.productId), new Quantity(request.quantity));
+            return ResponseEntity.ok(AddItemToCartResponse.fromMap(map));
+        } catch (AddsItemToCart.CartNotFound ex) {
             return ResponseEntity.of(ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, "Cart not found")).build();
         }
-        return ResponseEntity.ok(AddItemToCartResponse.fromCart(cart.orElseThrow()));
     }
 
 }

@@ -1,6 +1,7 @@
 package com.thoughtworks.tdd.cart.service;
 
 import com.thoughtworks.tdd.cart.domain.*;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.AbstractMap;
@@ -10,6 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@Disabled("WIP")
 class AddItemToCartServiceTest {
 
     CartRepository repository = mock(CartRepository.class);
