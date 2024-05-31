@@ -1,7 +1,11 @@
 package com.thoughtworks.tdd.cart.domain;
 
-import java.util.Optional;
+import java.util.Map;
 
 public interface AddsItemToCart {
-    Optional<Cart> addItemToCart(CartId cartId, ProductId productId, Quantity quantity);
+    Map<ProductId, Quantity> addItemToCart(CartId cartId, ProductId productId, Quantity quantity)
+            throws CartNotFound;
+
+    class CartNotFound extends Exception {
+    }
 }

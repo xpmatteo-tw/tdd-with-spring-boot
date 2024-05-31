@@ -5,68 +5,42 @@ import com.thoughtworks.tdd.cart.web.AddItemToCartController.AddItemToCartReques
 import com.thoughtworks.tdd.cart.web.AddItemToCartController.AddItemToCartResponse;
 import com.thoughtworks.tdd.cart.web.AddItemToCartController.AddItemToCartResponse.RequestCartItem;
 import org.junit.jupiter.api.Test;
+import org.mockito.quality.Strictness;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class AddItemToCartControllerTest {
 
-    AddsItemToCart addsItemToCart = mock(AddsItemToCart.class);
+    AddsItemToCart addsItemToCart = mock(AddsItemToCart.class, withSettings().strictness(Strictness.STRICT_STUBS));
     AddItemToCartController controller = new AddItemToCartController(addsItemToCart);
 
     @Test
-    void returns200OK() {
-        var cartId = new CartId("C123");
-        var productId = new ProductId("P456");
-        var addedQuantity = new Quantity(2);
-        var updatedQuantity = new Quantity(3);
-        when(addsItemToCart.addItemToCart(cartId, productId, addedQuantity))
-                .thenReturn(Optional.of(Cart.with(productId, updatedQuantity)));
+    void returns200OK() throws AddsItemToCart.CartNotFound {
         var request = new AddItemToCartRequest("P456", 2);
+        when(addsItemToCart.addItemToCart(new CartId("C123"), new ProductId("P456"), new Quantity(2)))
+                .thenReturn(Map.of(new ProductId("P456"), new Quantity(3)));
 
         var response = controller.addItemToCart("C123", request);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).isNotNull();
-        var expectedResponse = new AddItemToCartResponse(List.of(new RequestCartItem("P456", 3)));
-        assertThat(response.getBody()).isEqualTo(expectedResponse);
+        assertThat(response.getBody()).isEqualTo(
+                new AddItemToCartResponse(
+                        List.of(new RequestCartItem("P456", 3))));
     }
 
     @Test
-    void addItemToCartWithDifferentProduct() {
-        var cartId = new CartId("C123");
-        var product1 = new ProductId("P111");
-        var product2 = new ProductId("P222");
-        var quantity = new Quantity(1);
-        when(addsItemToCart.addItemToCart(cartId, product1, quantity))
-                .thenReturn(Optional.of(Cart.with(product1, quantity, product2, quantity)));
-        var request = new AddItemToCartRequest("P111", 1);
-
-        var response = controller.addItemToCart("C123", request);
-
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody()).isNotNull();
-        var expectedResponse = new AddItemToCartResponse(List.of(
-                new RequestCartItem("P111", 1),
-                new RequestCartItem("P222", 1)
-        ));
-        assertThat(response.getBody()).isEqualTo(expectedResponse);
-    }
-
-    @Test
-    void cartNotFound() {
-        var cartId = new CartId("C123");
-        var productId = new ProductId("P456");
-        var addedQuantity = new Quantity(2);
-        var request = new AddItemToCartRequest("P456", 1);
-        when(addsItemToCart.addItemToCart(cartId, productId, addedQuantity))
-                .thenReturn(Optional.empty());
+    void cartNotFound() throws AddsItemToCart.CartNotFound {
+        var request = new AddItemToCartRequest("P456", 2);
+        when(addsItemToCart.addItemToCart(new CartId("C123"), new ProductId("P456"), new Quantity(2)))
+                .thenThrow(new AddsItemToCart.CartNotFound());
 
         var response = controller.addItemToCart("C123", request);
 
