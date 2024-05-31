@@ -3,14 +3,14 @@ package com.thoughtworks.tdd.cart.service;
 import com.thoughtworks.tdd.cart.domain.*;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import java.util.AbstractMap;
 import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class AddItemToCartServiceTest {
 
@@ -28,5 +28,6 @@ class AddItemToCartServiceTest {
         assertThat(map).containsExactly(
                 new AbstractMap.SimpleEntry<>(new ProductId("P111"), quantity)
         );
+        verify(repository).save(cart);
     }
 }

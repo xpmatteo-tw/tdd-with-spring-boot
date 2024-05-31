@@ -17,6 +17,7 @@ public class AddItemToCartService implements AddsItemToCart {
         Optional<Cart> optionalCart = repository.findCart(cartId);
         Cart cart = optionalCart.get();
         cart.addItem(productId, quantity);
+        repository.save(cart);
         return cart.items();
     }
 }
