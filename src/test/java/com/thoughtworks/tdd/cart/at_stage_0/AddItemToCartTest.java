@@ -1,5 +1,7 @@
 package com.thoughtworks.tdd.cart.at_stage_0;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.tdd.cart.CartApplication;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,16 +18,20 @@ public class AddItemToCartTest {
     @Autowired
     TestRestTemplate restTemplate;
 
+    @Autowired
+    ObjectMapper objectMapper;
+
     @Test
-    void add_one_item_to_empty_cart() {
-        var request = """
+    void add_one_item_to_empty_cart() throws JsonProcessingException {
+        String request = """
                 {
                     "productId": "P456",
                     "quantity": 1
                 }
                 """;
 
-        var responseEntity = restTemplate.postForEntity("/carts/C123", request, String.class);
+        Object requestAsObject = objectMapper.readValue(request, Object.class);
+        var responseEntity = restTemplate.postForEntity("/carts/C123", requestAsObject, String.class);
 
         var expectedResponse = """
                 {
@@ -35,7 +41,7 @@ public class AddItemToCartTest {
                 }
                 """;
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(responseEntity.getBody()).isNotNull();
+        assertThat(responseEntity.getBody()).describedAs("body is null").isNotNull();
         assertThat(responseEntity.getBody()).isEqualTo(expectedResponse);
     }
 }
