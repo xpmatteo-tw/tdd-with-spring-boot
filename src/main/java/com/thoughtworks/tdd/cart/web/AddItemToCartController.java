@@ -30,6 +30,8 @@ public class AddItemToCartController {
 
     @PostMapping("/carts/{cartId}")
     public ResponseEntity<Object> addItemToCart(@PathVariable String cartId, @RequestBody Object request) {
-        return ResponseEntity.ok().build();
+        Object body = Map.of("items",
+                List.of(Map.of("productId", "P456", "quantity", 1)));
+        return ResponseEntity.ok(body);
     }
 }
