@@ -1,12 +1,9 @@
 package com.thoughtworks.tdd.cart.web;
 
-import com.thoughtworks.tdd.cart.domain.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ProblemDetail;
+import com.thoughtworks.tdd.cart.domain.ProductId;
+import com.thoughtworks.tdd.cart.domain.Quantity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,7 +13,6 @@ import java.util.Map;
 
 @RestController
 public class AddItemToCartController {
-    private final AddsItemToCart service;
 
     public record AddItemToCartRequest(String productId, int quantity) {
     }
@@ -31,19 +27,9 @@ public class AddItemToCartController {
         }
     }
 
-    @Autowired
-    public AddItemToCartController(AddsItemToCart service) {
-        this.service = service;
-    }
-
-    @PostMapping("/carts/{cartId}")
+//    @PostMapping("/carts/{cartId}")
     public ResponseEntity<Object> addItemToCart(@PathVariable String cartId, @RequestBody AddItemToCartRequest request) {
-        try {
-            var map = this.service.addItemToCart(new CartId(cartId), new ProductId(request.productId), new Quantity(request.quantity));
-            return ResponseEntity.ok(AddItemToCartResponse.fromMap(map));
-        } catch (AddsItemToCart.CartNotFound ex) {
-            return ResponseEntity.of(ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, "Cart not found")).build();
-        }
+        return ResponseEntity.ok().build();
     }
 
 }
