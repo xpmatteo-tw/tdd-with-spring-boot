@@ -1,7 +1,8 @@
-package com.thoughtworks.tdd.cart;
+package com.thoughtworks.tdd.cart.at_stage_1;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.thoughtworks.tdd.cart.CartApplication;
 import com.thoughtworks.tdd.cart.domain.Cart;
 import com.thoughtworks.tdd.cart.domain.CartId;
 import com.thoughtworks.tdd.cart.domain.CartRepository;
