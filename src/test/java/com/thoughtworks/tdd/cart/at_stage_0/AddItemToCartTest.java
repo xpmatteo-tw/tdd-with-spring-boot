@@ -30,8 +30,7 @@ public class AddItemToCartTest {
                 }
                 """;
 
-        Object requestAsObject = objectMapper.readValue(request, Object.class);
-        var responseEntity = restTemplate.postForEntity("/carts/C123", requestAsObject, Object.class);
+        var responseEntity = restTemplate.postForEntity("/carts/C123", toObject(request), Object.class);
 
         var expectedResponse = """
                 {
@@ -40,9 +39,12 @@ public class AddItemToCartTest {
                     ]
                 }
                 """;
-        Object expectedResponseAsObject = objectMapper.readValue(expectedResponse, Object.class);
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(responseEntity.getBody()).describedAs("body is null").isNotNull();
-        assertThat(responseEntity.getBody()).isEqualTo(expectedResponseAsObject);
+        assertThat(responseEntity.getBody()).isEqualTo(toObject(expectedResponse));
+    }
+
+    private Object toObject(String request) throws JsonProcessingException {
+        return objectMapper.readValue(request, Object.class);
     }
 }
