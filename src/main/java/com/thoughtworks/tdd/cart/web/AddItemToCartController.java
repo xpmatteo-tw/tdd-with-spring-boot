@@ -12,6 +12,8 @@ import java.util.Map;
 @RestController
 public class AddItemToCartController {
 
+    // This is a fake implementation of the controller that we use to verify
+    // that the first acceptance test can pass
     @PostMapping("/carts/{cartId}")
     public ResponseEntity<Object> addItemToCart(@PathVariable String cartId, @RequestBody Object request) {
         Object body = Map.of("items",
