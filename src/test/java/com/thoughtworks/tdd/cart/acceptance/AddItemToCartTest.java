@@ -1,4 +1,4 @@
-package com.thoughtworks.tdd.cart.at_stage_1;
+package com.thoughtworks.tdd.cart.acceptance;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -6,7 +6,7 @@ import com.thoughtworks.tdd.cart.CartApplication;
 import com.thoughtworks.tdd.cart.domain.Cart;
 import com.thoughtworks.tdd.cart.domain.CartId;
 import com.thoughtworks.tdd.cart.domain.CartRepository;
-import org.junit.jupiter.api.Disabled;
+import com.thoughtworks.tdd.cart.domain.ProductId;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,16 +14,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ProblemDetail;
 
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 
-@Disabled("feature is WIP")
+//@Disabled("feature is WIP")
 @Tag("acceptance")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = CartApplication.class)
 public class AddItemToCartTest {
@@ -40,14 +38,14 @@ public class AddItemToCartTest {
     void add_one_item_to_empty_cart() throws JsonProcessingException {
         when(cartRepository.findCart(new CartId("C1234")))
                 .thenReturn(Optional.of(new Cart()));
-        var request = """
+        String request = """
                 {
                     "productId": "P456",
                     "quantity": 1
                 }
                 """;
 
-        var responseEntity = restTemplate.postForEntity("/carts/C123", toObject(request), String.class);
+        var responseEntity = restTemplate.postForEntity("/carts/C123", toObject(request), Object.class);
 
         var expectedResponse = """
                 {
@@ -57,29 +55,38 @@ public class AddItemToCartTest {
                 }
                 """;
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(responseEntity.getBody()).isNotNull();
-        assertThat(toObject(responseEntity.getBody())).isEqualTo(toObject(expectedResponse));
+        assertThat(responseEntity.getBody()).describedAs("body is null").isNotNull();
+        assertThat(responseEntity.getBody()).isEqualTo(toObject(expectedResponse));
     }
 
     @Test
-    void addOneItem_cartNotFound() throws JsonProcessingException {
-        when(cartRepository.findCart(any()))
-                .thenReturn(Optional.empty());
-        var request = """
+    void add_one_item_to_nonempty_cart() throws JsonProcessingException {
+        when(cartRepository.findCart(new CartId("C123")))
+                .thenReturn(Optional.of(
+                        new Cart().add(2, ProductId.of("P222"))));
+        String request = """
                 {
-                    "productId": "P456",
-                    "quantity": 1
+                    "productId": "P333",
+                    "quantity": 3
                 }
                 """;
 
-        var responseEntity = restTemplate.postForEntity("/carts/C999", toObject(request), ProblemDetail.class);
+        var responseEntity = restTemplate.postForEntity("/carts/C123", toObject(request), Object.class);
 
-        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-        assertThat(responseEntity.getBody()).isNotNull();
-        assertThat(responseEntity.getBody().getDetail()).isEqualTo("Cart not found");
+        var expectedResponse = """
+                {
+                    "items": [
+                        {"productId": "P222", "quantity": 2},
+                        {"productId": "P333", "quantity": 3}
+                    ]
+                }
+                """;
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(responseEntity.getBody()).describedAs("body is null").isNotNull();
+        assertThat(responseEntity.getBody()).isEqualTo(toObject(expectedResponse));
     }
 
-    public Object toObject(String json) throws JsonProcessingException {
-        return objectMapper.readValue(json, Object.class);
+    private Object toObject(String request) throws JsonProcessingException {
+        return objectMapper.readValue(request, Object.class);
     }
 }
