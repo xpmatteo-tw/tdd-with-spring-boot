@@ -47,5 +47,4 @@ public class AddItemToCartController {
         Response response = Response.from(cart);
         return ResponseEntity.ok(response);
     }
-
 }
