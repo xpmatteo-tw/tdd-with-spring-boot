@@ -3,10 +3,7 @@ package com.thoughtworks.tdd.cart.acceptance;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.tdd.cart.CartApplication;
-import com.thoughtworks.tdd.cart.domain.Cart;
-import com.thoughtworks.tdd.cart.domain.CartId;
-import com.thoughtworks.tdd.cart.domain.CartRepository;
-import com.thoughtworks.tdd.cart.domain.ProductId;
+import com.thoughtworks.tdd.cart.domain.*;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -74,7 +71,7 @@ public class AddItemToCartAcceptanceTest {
     void add_one_item_to_nonempty_cart() throws JsonProcessingException {
         when(RepositoryConfiguration.fakeCartRepository.findCart(new CartId("C123")))
                 .thenReturn(Optional.of(
-                        new Cart().add(2, ProductId.of("P222"))));
+                        new Cart().add(Quantity.of(2), ProductId.of("P222"))));
         String request = """
                 {
                     "productId": "P333",
