@@ -24,7 +24,7 @@ class AddItemToCartResponseTest {
 
         Response actual = Response.from(cart);
 
-        Response expected = new Response(List.of(Pair.of(2, "P222")));
+        Response expected = new Response(List.of(AddItemToCartController.Pair.of(2, "P222")));
         assertThat(actual).isEqualTo(expected);
     }
 
@@ -37,8 +37,8 @@ class AddItemToCartResponseTest {
         Response actual = Response.from(cart);
 
         Response expected = new Response(List.of(
-                Pair.of(2, "P222"),
-                Pair.of(1, "P111")
+                AddItemToCartController.Pair.of(2, "P222"),
+                AddItemToCartController.Pair.of(1, "P111")
         ));
         assertThat(actual).isEqualTo(expected);
     }

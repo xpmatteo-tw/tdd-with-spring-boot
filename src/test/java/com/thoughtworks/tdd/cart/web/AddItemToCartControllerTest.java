@@ -5,8 +5,6 @@ import com.thoughtworks.tdd.cart.domain.CartId;
 import com.thoughtworks.tdd.cart.domain.ProductId;
 import com.thoughtworks.tdd.cart.domain.Quantity;
 import com.thoughtworks.tdd.cart.service.AddItemToCartService;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,8 +33,8 @@ class AddItemToCartControllerTest {
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(result.getBody()).isEqualTo(
                 new AddItemToCartController.Response(
-                        List.of(Pair.of(2, "P222"),
-                                Pair.of(3, "P333"))
+                        List.of(AddItemToCartController.Pair.of(2, "P222"),
+                                AddItemToCartController.Pair.of(3, "P333"))
                 ));
     }
 }

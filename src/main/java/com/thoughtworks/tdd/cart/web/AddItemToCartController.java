@@ -13,8 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-import static java.util.Collections.emptyList;
-
 @RestController
 public class AddItemToCartController {
     private final AddItemToCartService addItemToCartService;
@@ -26,12 +24,18 @@ public class AddItemToCartController {
     public record Request(int quantity, String productId) {
     }
 
-    public record Response(List<Pair<Integer, String>> items) {
+    public record Response(List<Pair> items) {
         public static Response from(Cart cart) {
             var pairs = cart.items().stream()
                     .map(item -> Pair.of(item.quantity().value(), item.productId().value()))
                     .toList();
             return new Response(pairs);
+        }
+    }
+
+    public record Pair(int quantity, String productId) {
+        public static Pair of(int quantity, String productId) {
+            return new Pair(quantity, productId);
         }
     }
 
