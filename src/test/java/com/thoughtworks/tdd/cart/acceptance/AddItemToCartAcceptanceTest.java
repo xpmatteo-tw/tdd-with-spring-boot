@@ -31,7 +31,7 @@ class RepositoryConfiguration {
     }
 }
 
-@Disabled("feature is WIP")
+//@Disabled("feature is WIP")
 @Import(RepositoryConfiguration.class)
 @Tag("acceptance")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = CartApplication.class)
