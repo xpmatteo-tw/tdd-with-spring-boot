@@ -5,8 +5,6 @@ import com.thoughtworks.tdd.cart.domain.CartId;
 import com.thoughtworks.tdd.cart.domain.ProductId;
 import com.thoughtworks.tdd.cart.domain.Quantity;
 import com.thoughtworks.tdd.cart.service.AddItemToCartService;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +17,12 @@ import static org.mockito.Mockito.when;
 
 class AddItemToCartControllerTest {
 
+    // given   cart with id C123 exists
+    //and     the cart contains 2xP222
+    //when    I add 3 x product P333 to cart C123
+    //then    the cart now contains 2xP222, 3xP333
+    //and     the cart is returned
+
     @Test
     void addsItemToCart() {
         var service = mock(AddItemToCartService.class);
@@ -26,7 +30,6 @@ class AddItemToCartControllerTest {
         when(service.addItemToCart(CartId.of("C123"), Quantity.of(3), ProductId.of("P333")))
                 .thenReturn(new Cart()
                         .add(Quantity.of(2), ProductId.of("P222"))
-                        .add(Quantity.of(3), ProductId.of("P333"))
                 );
 
         ResponseEntity<AddItemToCartController.Response> result =
