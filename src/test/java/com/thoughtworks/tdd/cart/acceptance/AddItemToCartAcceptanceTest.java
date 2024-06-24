@@ -21,7 +21,7 @@ import static org.mockito.Mockito.when;
 //@Disabled("feature is WIP")
 @Tag("acceptance")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = CartApplication.class)
-public class AddItemToCartTest {
+public class AddItemToCartAcceptanceTest {
     @Autowired
     TestRestTemplate restTemplate;
 

@@ -13,8 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-import static java.util.Collections.emptyList;
-
 @RestController
 public class AddItemToCartController {
     private final AddItemToCartService addItemToCartService;
@@ -41,8 +39,6 @@ public class AddItemToCartController {
         }
     }
 
-    // This is a fake implementation of the controller that we use to verify
-    // that the first acceptance test can pass
     @PostMapping("/carts/{cartId}")
     public ResponseEntity<Response> addItemToCart(@PathVariable String cartId, @RequestBody Request request) {
         Cart cart = addItemToCartService.addItemToCart(CartId.of(cartId), Quantity.of(request.quantity), ProductId.of(request.productId));
