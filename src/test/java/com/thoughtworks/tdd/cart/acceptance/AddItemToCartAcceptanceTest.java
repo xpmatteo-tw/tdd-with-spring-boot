@@ -7,6 +7,7 @@ import com.thoughtworks.tdd.cart.domain.Cart;
 import com.thoughtworks.tdd.cart.domain.CartId;
 import com.thoughtworks.tdd.cart.domain.CartRepository;
 import com.thoughtworks.tdd.cart.domain.ProductId;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,11 +34,11 @@ class RepositoryConfiguration {
     }
 }
 
-//@Disabled("feature is WIP")
+@Disabled("feature is WIP")
 @Import(RepositoryConfiguration.class)
 @Tag("acceptance")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = CartApplication.class)
-public class AddItemToCartTest {
+public class AddItemToCartAcceptanceTest {
     @Autowired
     TestRestTemplate restTemplate;
 

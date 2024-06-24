@@ -26,4 +26,15 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+
+	// silence warning about Mockito using bytebuddy
+	jvmArgs "-XX:+EnableDynamicAgentLoading"
+
+	// silence mysterious warning
+	jvmArgs "-Xshare:off"
+
+	testLogging {
+		exceptionFormat = 'full'
+		events "passed", "skipped", "failed", "standardOut", "standardError"
+	}
 }
