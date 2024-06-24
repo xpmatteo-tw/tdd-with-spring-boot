@@ -20,26 +20,37 @@ class AddItemToCartResponseTest {
 
     @Test
     void fromSingleItemCart() {
-        Cart cart = new Cart().add(Quantity.of(2), ProductId.of("P222"));
+        var cart = new Cart();
 
-        Response actual = Response.from(cart);
+        var response = AddItemToCartController.Response.from(cart);
 
-        Response expected = new Response(List.of(AddItemToCartController.Pair.of(2, "P222")));
-        assertThat(actual).isEqualTo(expected);
+        assertThat(response).isEqualTo(new AddItemToCartController.Response(List.of()));
+    }
+
+    @Test
+    void fromCartWithOneItem() {
+        var cart = new Cart()
+                .add(Quantity.of(7), ProductId.of("P777"));
+
+        var response = AddItemToCartController.Response.from(cart);
+
+        assertThat(response).isEqualTo(new AddItemToCartController.Response(List.of(
+                new AddItemToCartController.Pair(7, "P777")
+        )));
     }
 
     @Test
     void fromCartWithTwoItems() {
-        Cart cart = new Cart()
-                .add(Quantity.of(2), ProductId.of("P222"))
-                .add(Quantity.of(1), ProductId.of("P111"));
+        var cart = new Cart()
+                .add(Quantity.of(7), ProductId.of("P777"))
+                .add(Quantity.of(8), ProductId.of("P888"))
+                ;
 
-        Response actual = Response.from(cart);
+        var response = AddItemToCartController.Response.from(cart);
 
-        Response expected = new Response(List.of(
-                AddItemToCartController.Pair.of(2, "P222"),
-                AddItemToCartController.Pair.of(1, "P111")
-        ));
-        assertThat(actual).isEqualTo(expected);
+        assertThat(response).isEqualTo(new AddItemToCartController.Response(List.of(
+                new AddItemToCartController.Pair(7, "P777"),
+                new AddItemToCartController.Pair(8, "P888")
+        )));
     }
 }

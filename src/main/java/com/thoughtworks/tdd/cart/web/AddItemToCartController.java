@@ -15,10 +15,11 @@ import java.util.List;
 
 @RestController
 public class AddItemToCartController {
-    private final AddItemToCartService addItemToCartService;
+
+    private final AddItemToCartService service;
 
     public AddItemToCartController(AddItemToCartService service) {
-        this.addItemToCartService = service;
+        this.service = service;
     }
 
     public record Request(int quantity, String productId) {
@@ -26,24 +27,21 @@ public class AddItemToCartController {
 
     public record Response(List<Pair> items) {
         public static Response from(Cart cart) {
-            var pairs = cart.items().stream()
-                    .map(item -> Pair.of(item.quantity().value(), item.productId().value()))
+            List<Pair> pairs = cart.items().stream()
+                    .map(item -> new Pair(item.quantity().value(), item.productId().value()))
                     .toList();
+
             return new Response(pairs);
         }
     }
 
     public record Pair(int quantity, String productId) {
-        public static Pair of(int quantity, String productId) {
-            return new Pair(quantity, productId);
-        }
     }
 
     @PostMapping("/carts/{cartId}")
-    public ResponseEntity<Response> addItemToCart(@PathVariable String cartId, @RequestBody Request request) {
-        Cart cart = addItemToCartService.addItemToCart(CartId.of(cartId), Quantity.of(request.quantity), ProductId.of(request.productId));
-        Response response = Response.from(cart);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<Object> addItemToCart(@PathVariable String cartId, @RequestBody Request request) {
+        Cart cart = service.addItemToCart(CartId.of(cartId), Quantity.of(request.quantity), ProductId.of(request.productId));
+        return ResponseEntity.ok(Response.from(cart));
     }
 
 }

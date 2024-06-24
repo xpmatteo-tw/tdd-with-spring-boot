@@ -35,7 +35,7 @@ class RepositoryConfiguration {
 @Import(RepositoryConfiguration.class)
 @Tag("acceptance")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = CartApplication.class)
-public class AddItemToCartTest {
+public class AddItemToCartAcceptanceTest {
     @Autowired
     TestRestTemplate restTemplate;
 

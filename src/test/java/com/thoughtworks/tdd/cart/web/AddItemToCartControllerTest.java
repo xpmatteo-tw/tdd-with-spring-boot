@@ -7,7 +7,6 @@ import com.thoughtworks.tdd.cart.domain.Quantity;
 import com.thoughtworks.tdd.cart.service.AddItemToCartService;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
@@ -27,14 +26,12 @@ class AddItemToCartControllerTest {
                         .add(Quantity.of(3), ProductId.of("P333"))
                 );
 
-        ResponseEntity<AddItemToCartController.Response> result =
-                controller.addItemToCart("C123", new AddItemToCartController.Request(3, "P333"));
+        var response = controller.addItemToCart("C123", new AddItemToCartController.Request(3, "P333"));
 
-        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(result.getBody()).isEqualTo(
-                new AddItemToCartController.Response(
-                        List.of(AddItemToCartController.Pair.of(2, "P222"),
-                                AddItemToCartController.Pair.of(3, "P333"))
-                ));
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isEqualTo(new AddItemToCartController.Response(List.of(
+                new AddItemToCartController.Pair(2, "P222"),
+                new AddItemToCartController.Pair(3, "P333")
+        )));
     }
 }
