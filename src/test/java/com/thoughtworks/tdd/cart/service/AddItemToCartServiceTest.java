@@ -14,7 +14,7 @@ class AddItemToCartServiceTest {
     @Test
     void addsItemToCart() {
         var repository = mock(CartRepository.class);
-        var service = new AddItemToCartService();
+        var service = new AddItemToCartService(repository);
         when(repository.findCart(CartId.of("C123")))
                 .thenReturn(Optional.of(new Cart().add(Quantity.of(2), ProductId.of("P222"))));
 
