@@ -9,30 +9,16 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@TestConfiguration
-class RepositoryConfiguration {
-    public static CartRepository fakeCartRepository = mock(CartRepository.class);
-
-    @Bean
-    public CartRepository cartRepository() {
-        return fakeCartRepository;
-    }
-}
-
 @Disabled("feature is WIP")
-@Import(RepositoryConfiguration.class)
 @Tag("acceptance")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = CartApplication.class)
 public class AddItemToCartAcceptanceTest {
@@ -42,9 +28,12 @@ public class AddItemToCartAcceptanceTest {
     @Autowired
     ObjectMapper objectMapper;
 
+    @MockBean
+    CartRepository cartRepository;
+
     @Test
     void add_one_item_to_empty_cart() throws JsonProcessingException {
-        when(RepositoryConfiguration.fakeCartRepository.findCart(new CartId("C123")))
+        when(cartRepository.findCart(new CartId("C123")))
                 .thenReturn(Optional.of(new Cart()));
         String request = """
                 {
@@ -69,7 +58,7 @@ public class AddItemToCartAcceptanceTest {
 
     @Test
     void add_one_item_to_nonempty_cart() throws JsonProcessingException {
-        when(RepositoryConfiguration.fakeCartRepository.findCart(new CartId("C123")))
+        when(cartRepository.findCart(new CartId("C123")))
                 .thenReturn(Optional.of(
                         new Cart().add(Quantity.of(2), ProductId.of("P222"))));
         String request = """
