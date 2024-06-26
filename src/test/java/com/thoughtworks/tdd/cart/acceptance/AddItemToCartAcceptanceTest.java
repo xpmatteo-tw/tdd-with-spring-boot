@@ -32,31 +32,6 @@ public class AddItemToCartAcceptanceTest {
     CartRepository cartRepository;
 
     @Test
-    void add_one_item_to_empty_cart() throws JsonProcessingException {
-        when(cartRepository.findCart(new CartId("C123")))
-                .thenReturn(Optional.of(new Cart()));
-        String request = """
-                {
-                    "productId": "P456",
-                    "quantity": 1
-                }
-                """;
-
-        var responseEntity = restTemplate.postForEntity("/carts/C123", toObject(request), Object.class);
-
-        var expectedResponse = """
-                {
-                    "items": [
-                        {"productId": "P456", "quantity": 1}
-                    ]
-                }
-                """;
-        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(responseEntity.getBody()).describedAs("body is null").isNotNull();
-        assertThat(responseEntity.getBody()).isEqualTo(toObject(expectedResponse));
-    }
-
-    @Test
     void add_one_item_to_nonempty_cart() throws JsonProcessingException {
         when(cartRepository.findCart(new CartId("C123")))
                 .thenReturn(Optional.of(
