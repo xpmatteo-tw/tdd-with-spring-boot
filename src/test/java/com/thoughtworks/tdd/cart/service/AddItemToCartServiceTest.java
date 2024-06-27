@@ -3,6 +3,7 @@ package com.thoughtworks.tdd.cart.service;
 import com.thoughtworks.tdd.cart.domain.*;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 
 import java.util.Optional;
 
@@ -33,9 +34,11 @@ class AddItemToCartServiceTest {
 
         service.addItemToCart(CartId.of("C123"), Quantity.of(3), ProductId.of("P333"));
 
+        var argument = ArgumentCaptor.forClass(Cart.class);
+        verify(repository).save(argument.capture());
         var expectedCart = new Cart()
                 .add(Quantity.of(2), ProductId.of("P222"))
                 .add(Quantity.of(3), ProductId.of("P333"));
-        verify(repository).save(refEq(expectedCart));
+        assertThat(argument.getValue()).usingRecursiveComparison().isEqualTo(expectedCart);
     }
 }
