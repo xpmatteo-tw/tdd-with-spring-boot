@@ -1,6 +1,7 @@
 package com.thoughtworks.tdd.cart.service;
 
 import com.thoughtworks.tdd.cart.domain.*;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
@@ -30,8 +31,11 @@ class AddItemToCartServiceTest {
         when(repository.findCart(CartId.of("C123")))
                 .thenReturn(Optional.of(new Cart().add(Quantity.of(2), ProductId.of("P222"))));
 
-        var cart = service.addItemToCart(CartId.of("C123"), Quantity.of(3), ProductId.of("P333"));
+        service.addItemToCart(CartId.of("C123"), Quantity.of(3), ProductId.of("P333"));
 
-        verify(repository).save(cart);
+        var expectedCart = new Cart()
+                .add(Quantity.of(2), ProductId.of("P222"))
+                .add(Quantity.of(3), ProductId.of("P333"));
+        verify(repository).save(refEq(expectedCart));
     }
 }

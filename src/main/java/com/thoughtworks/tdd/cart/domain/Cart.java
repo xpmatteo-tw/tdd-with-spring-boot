@@ -18,4 +18,11 @@ public class Cart {
     public List<Item> items() {
         return Collections.unmodifiableList(items);
     }
+
+    @Override
+    public String toString() {
+        return "Cart{" +
+                "items=" + items +
+                '}';
+    }
 }
