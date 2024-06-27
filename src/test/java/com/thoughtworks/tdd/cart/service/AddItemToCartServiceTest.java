@@ -2,6 +2,8 @@ package com.thoughtworks.tdd.cart.service;
 
 import com.thoughtworks.tdd.cart.domain.*;
 import org.junit.jupiter.api.Test;
+import org.mockito.internal.stubbing.answers.ClonesArguments;
+import org.mockito.invocation.InvocationOnMock;
 
 import java.util.Optional;
 
@@ -29,17 +31,19 @@ class AddItemToCartServiceTest {
     void saves_the_updated_cart_to_the_repository() {
         when(repository.findCart(CartId.of("C123")))
                 .thenReturn(Optional.of(new Cart().add(Quantity.of(2), ProductId.of("P222"))));
-        doAnswer(invocation -> {
-            Cart cart = invocation.getArgument(0);
-            assertThat(cart.items()).containsExactly(
-                    new Cart.Item(Quantity.of(2), ProductId.of("P222")),
-                    new Cart.Item(Quantity.of(3), ProductId.of("P333"))
-            );
-            return null;
-        }).when(repository).save(any());
+        doAnswer(this::cloneArgument).when(repository).save(any());
 
         service.addItemToCart(CartId.of("C123"), Quantity.of(3), ProductId.of("P333"));
 
-        verify(repository).save(any());
+        Cart expectedCart = new Cart()
+                .add(Quantity.of(2), ProductId.of("P222"))
+                .add(Quantity.of(3), ProductId.of("P333"));
+        verify(repository).save(refEq(expectedCart));
+    }
+
+    private Object cloneArgument(InvocationOnMock invocation) {
+        Cart cart = invocation.getArgument(0);
+        invocation.getArguments()[0] = Cart.copyOf(cart);
+        return null;
     }
 }

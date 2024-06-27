@@ -5,6 +5,12 @@ import java.util.Collections;
 import java.util.List;
 
 public class Cart {
+    public static Cart copyOf(Cart original) {
+        Cart copy = new Cart();
+        copy.items.addAll(original.items);
+        return copy;
+    }
+
     public record Item(Quantity quantity, ProductId productId) {
     }
 
