@@ -18,8 +18,8 @@ public class AddItemToCartService {
         if (optionalCart.isEmpty()) {
             throw new UnsupportedOperationException("Not implemented");
         }
-        Cart cart = optionalCart.get();
+        Cart cart = optionalCart.get().add(quantity, productId);
         repository.save(cart);
-        return cart.add(quantity, productId);
+        return cart;
     }
 }
