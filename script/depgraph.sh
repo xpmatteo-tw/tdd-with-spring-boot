@@ -1,25 +1,42 @@
 
+shorten_our_package_names() {
+  sed 's/com.thoughtworks.tdd.//g'
+}
+
+shorten_library_package_names() {
+  sed 's/\([a-z]*\.[a-z]*\)\.[a-z.]*/\1/'
+}
+
+convert_to_dot_notation() {
+  awk '{print "\"" $1 "\" -> \"" $3 "\"" }'
+}
+
 cd $(dirname $0)/..
 set -eo pipefail
 
-(
-echo 'digraph { rankdir="LR"'
-ack import --java src/main\
-  | tr / . \
-  | sed 's/src.main.java.//' \
-  | sed 's/.java//' \
-  | sed 's/com.thoughtworks.tdd.//'g \
-  | sed 's/static java.util.Collections.emptyList/java.util/' \
-  | sed 's/import //' \
-  | sed 's/;//' \
-  | sed 's/\.[A-Z][a-zA-Z0-9]*//g' \
-  | sed 's/:[0-9]*:/" -> "/' \
-  | sed 's/^/"/' \
-  | sed 's/$/"/' \
-  | sort \
-  | uniq
+if [ "$1" != "--skip-build" ]; then
+  ./gradlew build -x test
+fi
 
-echo '}'
-) > /tmp/cart.digraph
-dot /tmp/cart.digraph -Tsvg > /tmp/cart.svg
+(
+echo '
+digraph { 
+  rankdir="LR"
+  node [style=filled,color="lightgray"]
+  "cart.domain" [color="lightgreen"]
+  "cart.service" [color="lightgreen"]
+  "cart.web" [color="Burlywood"]
+'
+jdeps build/libs/cart-0.0.1-SNAPSHOT-plain.jar \
+  | tail -n +3 \
+  | shorten_our_package_names \
+  | shorten_library_package_names \
+  | convert_to_dot_notation  \
+  | sort \
+  | uniq \
+  | cat
+echo "}"
+) > /tmp/cart.dot
+
+dot /tmp/cart.dot -Tsvg > /tmp/cart.svg
 open /tmp/cart.svg
