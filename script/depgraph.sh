@@ -26,6 +26,8 @@ digraph {
   "cart.domain" [color="lightgreen"]
   "cart.service" [color="lightgreen"]
   "cart.web" [color="Burlywood"]
+  "cart.db" [color="Burlywood"]
+  "cart" [label="main", color="lightblue"]
 '
 jdeps build/libs/cart-0.0.1-SNAPSHOT-plain.jar \
   | tail -n +3 \
