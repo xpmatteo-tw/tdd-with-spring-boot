@@ -1,0 +1,26 @@
+
+-- Disconnect any other connections
+SELECT pg_terminate_backend(pg_stat_activity.pid)
+FROM pg_stat_activity
+WHERE pg_stat_activity.datname IN ('cart_dev', 'cart_test')
+  AND pid <> pg_backend_pid();
+
+DROP DATABASE IF EXISTS CART_DEV;
+DROP DATABASE IF EXISTS CART_TEST;
+
+DROP USER IF EXISTS CART_DEV;
+DROP USER IF EXISTS CART_TEST;
+
+CREATE DATABASE CART_DEV;
+CREATE USER CART_DEV WITH PASSWORD 'cart_dev';
+
+CREATE DATABASE CART_TEST;
+CREATE USER CART_TEST WITH PASSWORD 'cart_test';
+
+\connect cart_dev;
+CREATE SCHEMA CART_DEV;
+GRANT ALL PRIVILEGES ON SCHEMA CART_DEV to CART_DEV;
+
+\connect cart_test;
+CREATE SCHEMA CART_TEST;
+GRANT ALL PRIVILEGES ON SCHEMA CART_TEST to CART_TEST;
