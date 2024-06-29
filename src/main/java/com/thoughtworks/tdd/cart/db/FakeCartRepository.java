@@ -21,6 +21,6 @@ public class FakeCartRepository implements CartRepository {
         if (cart.cartId() == null) {
             throw new IllegalArgumentException("Cart has no id");
         }
-        carts.put(cart.cartId(), cart);
+        carts.put(cart.cartId(), Cart.copyOf(cart));
     }
 }

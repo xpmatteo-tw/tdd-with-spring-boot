@@ -9,7 +9,7 @@ public class Cart {
     }
 
     public static Cart copyOf(Cart original) {
-        Cart copy = new Cart();
+        Cart copy = new Cart(original.cartId);
         copy.items.addAll(original.items);
         return copy;
     }
