@@ -1,11 +1,9 @@
 package com.thoughtworks.tdd.cart.service;
 
 import com.thoughtworks.tdd.cart.domain.*;
-import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-@Service
 public class AddItemToCartService {
     private final CartRepository repository;
 
