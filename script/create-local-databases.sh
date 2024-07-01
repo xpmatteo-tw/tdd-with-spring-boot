@@ -19,22 +19,27 @@ cd "$(dirname "$0")/.."
 
 container="cart-postgres"
 
+# Function that executes a sql script in the Postgres container
+execute_sql() {
+  local user="$1"
+  local sqlFile="$2"
+  docker cp -q "$sqlFile" $container:/
+  docker exec $container psql $user $user -f "$(basename $sqlFile)"
+}
+
 ## Step 1 : Create databases, users, roles and grants
-docker cp -q src/sql/init-db.sql $container:/
-docker exec $container psql postgres postgres -f init-db.sql #-v ON_ERROR_STOP=1
+execute_sql postgres src/main/sql/init-db.sql
 
 for user in cart_dev cart_test ; do
   ## Step 2 : Run migrations (In real work you should use Liquibase, Flyway or similar)
-  for sqlFile in src/sql/migrations/*.sql; do
+  for sqlFile in src/main/sql/migrations/*.sql; do
     echo "--- Executing migration for $user: $sqlFile"
-    docker cp -q "$sqlFile" $container:/
-    docker exec $container psql $user $user -f "$(basename $sqlFile)"
+    execute_sql "$user" "$sqlFile"
   done
 
   ## Step 3 : Seed-script
-  for sqlFile in src/sql/seed/*.sql; do
+  for sqlFile in src/main/sql/seed/*.sql; do
     echo "--- Seeding data for $user: $sqlFile"
-    docker cp -q "$sqlFile" $container:/
-    docker exec $container psql $user $user -f "$(basename $sqlFile)"
+    execute_sql "$user" "$sqlFile"
   done
 done
