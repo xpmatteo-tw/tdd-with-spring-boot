@@ -34,12 +34,6 @@ class PostgresCartRepositoryTest {
     }
 
     @Test
-    void canConnectToDb() {
-        assertThat(jdbcTemplate.queryForObject("select 2+3", Integer.class))
-                .isEqualTo(5);
-    }
-
-    @Test
     void findsCartById() {
         jdbcTemplate.update("insert into carts (cart_id) values (?)", "C123");
 
@@ -103,6 +97,20 @@ class PostgresCartRepositoryTest {
         Optional<Cart> found = repository.findCart(CartId.of("C000"));
         assertThat(found).isPresent();
         assertThat(found.get()).usingRecursiveComparison().isEqualTo(newNonEmptyCart);
+    }
+
+    @Test
+    void addItemsToExistingCart() {
+        Cart cart = new Cart(CartId.of("C000"))
+                .add(Quantity.of(3), ProductId.of("P333"));
+        repository.save(cart);
+        cart.add(Quantity.of(4), ProductId.of("P444"));
+
+        repository.save(cart);
+
+        Optional<Cart> found = repository.findCart(CartId.of("C000"));
+        assertThat(found).isPresent();
+        assertThat(found.get()).usingRecursiveComparison().isEqualTo(cart);
     }
 
 

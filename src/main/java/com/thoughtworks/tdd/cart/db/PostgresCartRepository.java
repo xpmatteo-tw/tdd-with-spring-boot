@@ -34,11 +34,23 @@ public class PostgresCartRepository implements CartRepository {
 
     @Override
     public void save(Cart cart) {
-        String sql = """
+        String sqlCart = """
         INSERT INTO carts (cart_id)
         VALUES (?)
         ON CONFLICT (cart_id) DO NOTHING
         """;
-        jdbcTemplate.update(sql, cart.cartId().value());
+        jdbcTemplate.update(sqlCart, cart.cartId().value());
+
+        for (var item : cart.items()) {
+            String sqlCartItem = """
+                    INSERT INTO cart_items (cart_id, quantity, product_id) 
+                    VALUES (?,?,?)
+                    ON CONFLICT DO NOTHING
+                    """;
+            jdbcTemplate.update(sqlCartItem,
+                    cart.cartId().value(),
+                    item.quantity().value(),
+                    item.productId().value());
+        }
     }
 }
