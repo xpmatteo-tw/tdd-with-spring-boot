@@ -34,6 +34,11 @@ public class PostgresCartRepository implements CartRepository {
 
     @Override
     public void save(Cart cart) {
-
+        String sql = """
+        INSERT INTO carts (cart_id)
+        VALUES (?)
+        ON CONFLICT (cart_id) DO NOTHING
+        """;
+        jdbcTemplate.update(sql, cart.cartId().value());
     }
 }

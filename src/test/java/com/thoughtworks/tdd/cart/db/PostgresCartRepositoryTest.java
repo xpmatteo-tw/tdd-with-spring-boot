@@ -10,15 +10,13 @@ import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
-
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 class PostgresCartRepositoryTest {
-
-    JdbcTemplate jdbcTemplate = new JdbcTemplate(testDataSource());
+    static DataSource dataSource = testDataSource();
+    JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
     PostgresCartRepository repository = new PostgresCartRepository(jdbcTemplate);
 
     @BeforeEach
@@ -71,5 +69,41 @@ class PostgresCartRepositoryTest {
         Cart expected = new Cart(CartId.of("C123")).add(Quantity.of(3), ProductId.of("P456"));
         assertThat(optionalCart.get()).usingRecursiveComparison().isEqualTo(expected);
     }
+
+    @Test
+    void savesNewEmptyCart() {
+        Cart newEmptyCart = new Cart(CartId.of("C888"));
+
+        repository.save(newEmptyCart);
+
+        Optional<Cart> found = repository.findCart(CartId.of("C888"));
+        assertThat(found).isPresent();
+        assertThat(found.get()).usingRecursiveComparison().isEqualTo(newEmptyCart);
+    }
+
+    @Test
+    void savesExistingEmptyCart() {
+        Cart existingEmptyCart = new Cart(CartId.of("C888"));
+        repository.save(existingEmptyCart);
+
+        repository.save(existingEmptyCart);
+
+        Optional<Cart> found = repository.findCart(CartId.of("C888"));
+        assertThat(found).isPresent();
+        assertThat(found.get()).usingRecursiveComparison().isEqualTo(existingEmptyCart);
+    }
+
+    @Test
+    void savesNewNonEmptyCart() {
+        Cart newNonEmptyCart = new Cart(CartId.of("C000"))
+                .add(Quantity.of(3), ProductId.of("P333"));
+
+        repository.save(newNonEmptyCart);
+
+        Optional<Cart> found = repository.findCart(CartId.of("C000"));
+        assertThat(found).isPresent();
+        assertThat(found.get()).usingRecursiveComparison().isEqualTo(newNonEmptyCart);
+    }
+
 
 }
