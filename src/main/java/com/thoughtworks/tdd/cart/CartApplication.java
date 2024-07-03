@@ -1,11 +1,12 @@
 package com.thoughtworks.tdd.cart;
 
-import com.thoughtworks.tdd.cart.db.FakeCartRepository;
-import com.thoughtworks.tdd.cart.domain.*;
+import com.thoughtworks.tdd.cart.db.PostgresCartRepository;
+import com.thoughtworks.tdd.cart.domain.CartRepository;
 import com.thoughtworks.tdd.cart.service.AddItemToCartService;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 @SpringBootApplication
 public class CartApplication {
@@ -20,11 +21,7 @@ public class CartApplication {
 	}
 
 	@Bean
-	public CartRepository cartRepository() {
-		FakeCartRepository repository = new FakeCartRepository();
-		// test data
-		repository.save(new Cart(CartId.of("C000")));
-		repository.save(new Cart(CartId.of("C001")).add(Quantity.of(1), ProductId.of("P111")));
-		return repository;
+	public CartRepository cartRepository(JdbcTemplate jdbcTemplate) {
+		return new PostgresCartRepository(jdbcTemplate);
 	}
 }
