@@ -45,7 +45,7 @@ public class PostgresCartRepository implements CartRepository {
             String sqlCartItem = """
                     INSERT INTO cart_items (cart_id, quantity, product_id) 
                     VALUES (?,?,?)
-                    ON CONFLICT DO NOTHING
+                    ON CONFLICT(cart_id, product_id) DO UPDATE SET quantity = EXCLUDED.quantity
                     """;
             jdbcTemplate.update(sqlCartItem,
                     cart.cartId().value(),

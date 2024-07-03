@@ -97,7 +97,7 @@ public class AddItemToCartAcceptanceTest {
         assertThat(optionalCart).isPresent();
         assertThat(optionalCart.get()).usingRecursiveComparison().isEqualTo(
                 new Cart(CartId.of("C123"))
-                        .add(Quantity.of(5), ProductId.of("P222"))
+                        .add(Quantity.of(5), ProductId.of("P456"))
         );
     }
 

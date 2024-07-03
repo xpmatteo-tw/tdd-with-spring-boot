@@ -116,4 +116,21 @@ class PostgresCartRepositoryTest {
                         .add(Quantity.of(4), ProductId.of("P444"))
         );
     }
+
+    @Test
+    void updateQuantity() {
+        Cart cart = new Cart(CartId.of("C000"))
+                .add(Quantity.of(3), ProductId.of("P333"));
+        repository.save(cart);
+        cart.add(Quantity.of(2), ProductId.of("P333"));
+
+        repository.save(cart);
+
+        Optional<Cart> found = repository.findCart(CartId.of("C000"));
+        assertThat(found).isPresent();
+        assertThat(found.get()).usingRecursiveComparison().isEqualTo(
+                new Cart(CartId.of("C000"))
+                        .add(Quantity.of(5), ProductId.of("P333")));
+    }
+
 }

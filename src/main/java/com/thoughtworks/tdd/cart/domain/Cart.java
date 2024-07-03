@@ -28,7 +28,7 @@ public class Cart {
         if (oldQuantity == null) {
             items.put(productId, newQuantity);
         } else {
-            items.put(productId, Quantity.of(newQuantity.value() + oldQuantity.value()));
+            items.put(productId, oldQuantity.add(newQuantity));
         }
         return this;
     }
