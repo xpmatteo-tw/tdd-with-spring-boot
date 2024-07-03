@@ -1,8 +1,6 @@
 package com.thoughtworks.tdd.cart.domain;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class Cart {
     public record Item(Quantity quantity, ProductId productId) {
@@ -10,12 +8,12 @@ public class Cart {
 
     public static Cart copyOf(Cart original) {
         Cart copy = new Cart(original.cartId);
-        copy.items.addAll(original.items);
+        copy.items.putAll(original.items);
         return copy;
     }
 
     private final CartId cartId;
-    private final List<Item> items = new ArrayList<>();
+    private final Map<ProductId, Quantity> items = new LinkedHashMap<>();
 
     public Cart() {
         this(null);
@@ -25,13 +23,20 @@ public class Cart {
         this.cartId = cartId;
     }
 
-    public Cart add(Quantity quantity, ProductId productId) {
-        items.add(new Item(quantity, productId));
+    public Cart add(Quantity newQuantity, ProductId productId) {
+        Quantity oldQuantity = items.get(productId);
+        if (oldQuantity == null) {
+            items.put(productId, newQuantity);
+        } else {
+            items.put(productId, Quantity.of(newQuantity.value() + oldQuantity.value()));
+        }
         return this;
     }
 
     public List<Item> items() {
-        return Collections.unmodifiableList(items);
+        return items.entrySet().stream()
+                .map(entry -> new Item(entry.getValue(), entry.getKey()))
+                .toList();
     }
 
     public CartId cartId() {
