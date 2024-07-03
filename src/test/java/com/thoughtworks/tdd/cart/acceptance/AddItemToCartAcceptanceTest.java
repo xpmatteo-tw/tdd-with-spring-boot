@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpStatus;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.Optional;
 
@@ -27,14 +28,18 @@ public class AddItemToCartAcceptanceTest {
     @Autowired
     ObjectMapper objectMapper;
 
-    @MockBean
+    @Autowired
     CartRepository cartRepository;
+
+    @Autowired
+    JdbcTemplate jdbcTemplate;
 
     @Test
     void add_one_item_to_nonempty_cart() throws JsonProcessingException {
-        when(cartRepository.findCart(new CartId("C123")))
-                .thenReturn(Optional.of(
-                        new Cart().add(Quantity.of(2), ProductId.of("P222"))));
+        jdbcTemplate.execute("delete from cart_items where cart_id = 'C123'");
+        jdbcTemplate.execute("delete from carts where cart_id = 'C123'");
+        cartRepository.save(new Cart(CartId.of("C123"))
+                .add(Quantity.of(2), ProductId.of("P222")));
         String request = """
                 {
                     "productId": "P333",
@@ -53,8 +58,13 @@ public class AddItemToCartAcceptanceTest {
                 }
                 """;
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(responseEntity.getBody()).describedAs("body is null").isNotNull();
         assertThat(responseEntity.getBody()).isEqualTo(toObject(expectedResponse));
+        Optional<Cart> optionalCart = cartRepository.findCart(CartId.of("C123"));
+        assertThat(optionalCart).isPresent();
+        assertThat(optionalCart.get()).usingRecursiveComparison().isEqualTo(
+                new Cart(CartId.of("C123"))
+                        .add(Quantity.of(2), ProductId.of("P222"))
+                        .add(Quantity.of(3), ProductId.of("P333")));
     }
 
     private Object toObject(String request) throws JsonProcessingException {
